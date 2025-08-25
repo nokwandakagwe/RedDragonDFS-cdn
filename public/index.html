@@ -3,21 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Reddragon File Cdn - Easily upload  & managefiles with a user-friendly interface. Supports all file types.">
+  <meta name="description" content="Reddragon File Cdn - Easily upload & manage files with a user-friendly interface. Supports all file types.">
   <meta property="og:title" content="RedDragon File Cdn">
   <meta property="og:description" content="Upload & manage files quickly and easily with Reddragon Cdn. Supports all file types.">
   <meta property="og:image" content="https://url.bwmxmd.online/Adams.uzi2rytq.jpg">
-  <meta property="og:url" content="https://red-dragon-dfs-cdn.vercel.app/upload">
+  <meta property="og:url" content="red-dragon-dfs-cdn-ne32.vercel.app/upload">
   <title>REDDRAGON CDN || FILE MANAGEMENT</title>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <style>
-    .cf-turnstile {
-      transform: scale(0.8); 
-      transform-origin: top center; 
-      margin: 10px 0; 
-    }
     .spinner {
       animation: spin 1s linear infinite;
     }
@@ -191,7 +185,7 @@
     <div class="flex justify-between items-center p-4 border-b border-gray-700 relative">
       <div class="flex items-center space-x-2">
         <img src="https://url.bwmxmd.online/Adams.uzi2rytq.jpg" alt="Logo" class="w-10 h-10 rounded-full">
-        <span class="font-bold">RedDragon  Cdn</span>
+        <span class="font-bold">RedDragon Cdn</span>
       </div>
       <button id="close-mobile-menu" class="text-gray-400 hover:text-white">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -382,10 +376,9 @@
           <p class="text-xs text-gray-400 mt-1">If provided, you'll need this key to delete the file later</p>
         </div>
         
-        <!-- Turnstile/Upload Button Container -->
+        <!-- Upload Button Container -->
         <div id="auth-container" class="flex justify-center mb-6">
-          <div id="turnstile-container" class="cf-turnstile" data-sitekey="0x4AAAAAAA-coke-OJUp9YaS" data-callback="onTurnstileSuccess"></div>
-          <button id="upload-btn" class="w-1/2 bg-primary hover:bg-green-600 text-white py-3 px-4 rounded-lg font-medium transition hidden blinking-button">
+          <button id="upload-btn" class="w-1/2 bg-primary hover:bg-green-600 text-white py-3 px-4 rounded-lg font-medium transition blinking-button">
             <span id="upload-text">Upload File</span>
             <span id="upload-spinner" class="hidden spinner">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -500,22 +493,8 @@
       }
     }
     
-    let turnstileToken = null;
     let currentFile = null;
-    let turnstileCompleted = false;
-    let turnstileWidgetId = null;
-    
-    function onTurnstileSuccess(token) {
-      turnstileToken = token;
-      turnstileCompleted = true;
-      
-      document.getElementById('turnstile-container').style.display = 'none';
-      document.getElementById('delete-key-container').classList.remove('hidden');
-      document.getElementById('upload-btn').classList.remove('hidden');
-      
-      showToast('Security Check Passed');
-    }
-    
+
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('file-input');
     
@@ -600,17 +579,10 @@
       document.getElementById('pre-upload-info').classList.remove('hidden');
       document.getElementById('file-name-display').textContent = file.name;
       document.getElementById('file-size-display').textContent = formatFileSize(file.size);
-      
-      if (turnstileCompleted) {
-        return;
-      }
-      
-      if (!document.getElementById('turnstile-container').hasChildNodes()) {
-        turnstileWidgetId = window.turnstile.render(document.getElementById('turnstile-container'), {
-          sitekey: '0x4AAAAAAA-coke-OJUp9YaS',
-          callback: onTurnstileSuccess
-        });
-      }
+
+      // Show delete key input and upload button immediately
+      document.getElementById('delete-key-container').classList.remove('hidden');
+      document.getElementById('upload-btn').classList.remove('hidden');
     }
     
     document.getElementById('generate-delete-key').addEventListener('click', function() {
@@ -634,11 +606,6 @@
         return;
       }
       
-      if (!turnstileToken) {
-        showToast('Please complete the CAPTCHA', 'error');
-        return;
-      }
-      
       const deleteKey = document.getElementById('delete-key').value.trim();
       
       const formData = new FormData();
@@ -655,10 +622,7 @@
         
         const response = await fetch('/giftedUpload.php', {
           method: 'POST',
-          body: formData,
-          headers: {
-            'Turnstile-Token': turnstileToken
-          }
+          body: formData
         });
         
         const result = await response.json();
@@ -677,12 +641,8 @@
           document.getElementById('result-expiry').textContent = result.expiry;
           
           document.getElementById('upload-btn').classList.add('hidden');
-          document.getElementById('turnstile-container').style.display = 'none';
           document.getElementById('delete-key-container').classList.add('hidden');
           document.getElementById('upload-another-btn').classList.remove('hidden');
-          
-          turnstileToken = null;
-          turnstileCompleted = false;
         } else {
           showToast(result.error || 'Upload failed', 'error');
         }
@@ -697,13 +657,6 @@
     
     document.getElementById('upload-another-btn').addEventListener('click', () => {
       resetUploadUI();
-      
-      document.getElementById('upload-btn').classList.add('hidden');
-      
-      document.getElementById('turnstile-container').style.display = 'block';
-      if (window.turnstile && turnstileWidgetId) {
-        window.turnstile.reset(turnstileWidgetId);
-      }
     });
     
     document.getElementById('copy-url-btn').addEventListener('click', () => {
