@@ -1,0 +1,45 @@
+{
+  "name": "RedDragonDFS-cdn",
+  "version": "1.0.0",
+  "description": "File management service using cloudflare r2 object storage via AWS s3-client sdk",
+  "main": "./api/index.js",
+  "scripts": {
+    "start": "node ./api/index.js",
+    "dev": "nodemon ./api/index.js",
+    "test": "jest --verbose",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "pm2:start": "pm2 start ./api/index.js --name RedDragonDFS-cdn",
+    "pm2:stop": "pm2 stop RedDragonDFS-cdn",
+    "pm2:restart": "pm2 restart RedDragonDFS-cdn",
+    "pm2:delete": "pm2 delete RedDragonDFS-cdn",
+    "pm2:logs": "pm2 logs RedDragonDFS-cdn",
+    "pm2:status": "pm2 status",
+    "pm2:monit": "pm2 monit",
+    "pm2:start:prod": "NODE_ENV=production pm2 start ./api/index.js --name RedDragonDFS-cdn --update-env",
+    "pm2:reload": "pm2 reload RedDragonDFS-cdn",
+    "pm2:save": "pm2 save",
+    "pm2:startup": "pm2 startup",
+    "pm2:install": "npm install pm2 -g"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "*",
+    "axios": "*",
+    "cors": "*",
+    "pm2": "latest",
+    "dotenv": "*",
+    "express": "*",
+    "express-rate-limit": "*",
+    "form-data": "*",
+    "helmet": "*",
+    "mongoose": "*",
+    "multer": "*",
+    "winston": "*"
+  },
+  "devDependencies": {
+    "eslint": "*",
+    "jest": "*",
+    "nodemon": "*",
+    "prettier": "*"
+  }
+}
